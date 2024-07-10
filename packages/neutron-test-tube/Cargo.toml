@@ -11,13 +11,13 @@ exclude = ["neutron", "test_artifacts"]
 
 [dependencies]
 base64 = "0.21.5"
-cosmrs = {version = "0.15.0", features = ["cosmwasm"]}
+cosmrs = { version = "0.15.0", features = ["cosmwasm"] }
 cosmwasm-std = "1.4.0"
-neutron-sdk = "0.8.0"
+neutron-sdk = { package = "neutron-sdk", git = "https://github.com/epanchee/neutron-sdk", branch = "backport/cosmwasm_v1" }
 prost = "0.12.3"
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = {version = "0.5.0", path = "../test-tube" }
+test-tube = { version = "0.5.0", path = "../test-tube" }
 thiserror = "1.0.34"
 
 [features]
