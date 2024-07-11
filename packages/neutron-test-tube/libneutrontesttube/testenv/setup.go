@@ -134,7 +134,7 @@ func GenesisStateWithValSet(codec codec.Codec,
 
 	consumerGenesisState := consumer.CreateMinimalConsumerTestGenesis()
 	consumerGenesisState.InitialValSet = initValPowers
-	consumerGenesisState.ProviderConsensusState.NextValidatorsHash = tmtypes.NewValidatorSet(vals).
+	consumerGenesisState.Provider.ConsensusState.NextValidatorsHash = tmtypes.NewValidatorSet(vals).
 		Hash()
 	consumerGenesisState.Params.Enabled = true
 	genesisState[consumertypes.ModuleName] = codec.MustMarshalJSON(consumerGenesisState)
@@ -235,8 +235,9 @@ func InitChain(appInstance *app.App) (sdk.Context, secp256k1.PrivKey) {
 }
 
 func (env *TestEnv) BeginNewBlock(timeIncreaseSeconds uint64) {
-	// pbKey, _ := cryptocodec.ToTmPubKeyInterface(env.ValPrivs[0].PubKey())
-	// validator := tmtypes.NewValidator(pbKey, 1)
+	pbKey, _ := cryptocodec.ToTmPubKeyInterface(env.ValPrivs[0].PubKey())
+	validator := tmtypes.NewValidator(pbKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
 
 	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(timeIncreaseSeconds) * time.Second)
 	// header := cmtproto.Header{ChainID: "neutron-1", Height: env.Ctx.BlockHeight() + 1, Time: newBlockTime}
@@ -253,9 +254,14 @@ func (env *TestEnv) BeginNewBlock(timeIncreaseSeconds uint64) {
 	// env.App.BeginBlock(reqBeginBlock)
 	// env.Ctx = env.App.NewContext(false, reqBeginBlock.Header)
 
-	env.App.BeginBlocker(newCtx)
+	_, err := env.App.FinalizeBlock(&abci.RequestFinalizeBlock{
+		Height:             env.Ctx.BlockHeight(),
+		Time:               newBlockTime,
+		NextValidatorsHash: valSet.Hash(),
+	})
+	requireNoErr(err)
 
-	env.Ctx = env.App.NewContext(false)
+	// env.Ctx = env.App.NewContext(false)
 
 }
 
