@@ -28,8 +28,8 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// cosmwasm-testing
-	"github.com/j0nl1/test-tube/neutron-test-tube/result"
-	"github.com/j0nl1/test-tube/neutron-test-tube/testenv"
+	"github.com/epanchee/test-tube/neutron-test-tube/result"
+	"github.com/epanchee/test-tube/neutron-test-tube/testenv"
 )
 
 var (
@@ -70,8 +70,9 @@ func InitTestEnv() uint64 {
 	env.BeginNewBlock(5)
 	env.FundValidators()
 
-	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
-	env.App.EndBlock(reqEndBlock)
+	// reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
+	// env.App.EndBlock(reqEndBlock)
+	env.App.EndBlocker(ctx)
 	env.App.Commit()
 
 	envCounter += 1
@@ -148,8 +149,9 @@ func BeginBlock(envId uint64) {
 //export EndBlock
 func EndBlock(envId uint64) {
 	env := loadEnv(envId)
-	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
-	env.App.EndBlock(reqEndBlock)
+	// reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
+	// env.App.EndBlock(reqEndBlock)
+	env.App.EndBlocker(env.Ctx)
 	env.App.Commit()
 	envRegister.Store(envId, env)
 }
@@ -190,18 +192,28 @@ func Execute(envId uint64, base64ReqDeliverTx string) *C.char {
 		panic(err)
 	}
 
-	reqDeliverTx := abci.RequestDeliverTx{}
+	reqDeliverTx := abci.RequestFinalizeBlock{}
 	err = proto.Unmarshal(reqDeliverTxBytes, &reqDeliverTx)
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
 
-	resDeliverTx := env.App.DeliverTx(reqDeliverTx)
-	bz, err := proto.Marshal(&resDeliverTx)
-
+	resFinalizeTx, err := env.App.FinalizeBlock(&reqDeliverTx)
 	if err != nil {
 		panic(err)
 	}
+
+	bz, err := proto.Marshal(resFinalizeTx)
+
+	// reqDeliverTx := abci.RequestDeliverTx{}
+	// err = proto.Unmarshal(reqDeliverTxBytes, &reqDeliverTx)
+	// if err != nil {
+	// 	return encodeErrToResultBytes(result.ExecuteError, err)
+	// }
+
+	// resDeliverTx := env.App.DeliverTx(reqDeliverTx)
+	// bz, err := proto.Marshal(&resDeliverTx)
+
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	envRegister.Store(envId, env)
 
@@ -224,7 +236,7 @@ func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 		err := errors.New("No route found for `" + path + "`")
 		return encodeErrToResultBytes(result.QueryError, err)
 	}
-	res, err := route(env.Ctx, req)
+	res, err := route(env.Ctx, &req)
 
 	if err != nil {
 		return encodeErrToResultBytes(result.QueryError, err)

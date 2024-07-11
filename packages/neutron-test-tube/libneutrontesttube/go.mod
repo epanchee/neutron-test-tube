@@ -1,20 +1,22 @@
-module github.com/j0nl1/test-tube/neutron-test-tube
+module github.com/epanchee/test-tube/neutron-test-tube
 
 go 1.22.3
 
 toolchain go1.22.4
 
-replace github.com/neutron-org/neutron/v4 => ../neutron
+// replace github.com/neutron-org/neutron/v4 => ../neutron
 
 require (
 	cosmossdk.io/errors v1.0.1
+	cosmossdk.io/log v1.3.1
+	cosmossdk.io/math v1.3.0
 	github.com/CosmWasm/wasmd v0.51.0
 	github.com/cometbft/cometbft v0.38.7
-	github.com/cometbft/cometbft-db v0.11.0
+	github.com/cosmos/cosmos-db v1.0.2
 	github.com/cosmos/cosmos-sdk v0.50.7
 	github.com/cosmos/gogoproto v1.5.0
 	github.com/cosmos/interchain-security/v5 v5.0.0
-	github.com/neutron-org/neutron/v4 v4.0.0
+	github.com/neutron-org/neutron/v4 v4.0.1
 	github.com/pkg/errors v0.9.1
 )
 
@@ -30,8 +32,6 @@ require (
 	cosmossdk.io/collections v0.4.0 // indirect
 	cosmossdk.io/core v0.11.0 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.4 // indirect
-	cosmossdk.io/log v1.3.1 // indirect
-	cosmossdk.io/math v1.3.0 // indirect
 	cosmossdk.io/store v1.1.0 // indirect
 	cosmossdk.io/x/circuit v0.1.1 // indirect
 	cosmossdk.io/x/evidence v0.1.1 // indirect
@@ -67,11 +67,11 @@ require (
 	github.com/cockroachdb/pebble v1.1.0 // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
+	github.com/cometbft/cometbft-db v0.11.0 // indirect
 	github.com/consensys/bavard v0.1.13 // indirect
 	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/cosmos/admin-module/v2 v2.0.0-20240430142959-8b3328d1b1a2 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/cosmos-db v1.0.2 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
@@ -130,7 +130,7 @@ require (
 	github.com/gorilla/handlers v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/rpc v1.2.0 // indirect
-	github.com/gorilla/websocket v1.5.2 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
@@ -198,12 +198,12 @@ require (
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/skip-mev/block-sdk/v2 v2.1.2 // indirect
-	github.com/skip-mev/feemarket v1.0.0 // indirect
-	github.com/skip-mev/slinky v1.0.1-rc // indirect
+	github.com/skip-mev/feemarket v1.0.3 // indirect
+	github.com/skip-mev/slinky v1.0.3 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
-	github.com/spf13/cobra v1.8.0 // indirect
+	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.19.0 // indirect
 	github.com/streamingfast/logging v0.0.0-20230608130331-f22c91403091 // indirect
@@ -256,20 +256,14 @@ require (
 
 exclude github.com/coinbase/rosetta-sdk-go v0.7.9
 
-replace github.com/CosmWasm/wasmd => github.com/neutron-org/wasmd v0.51.0
-
-replace github.com/cosmos/admin-module/v2 => github.com/neutron-org/admin-module/v2 v2.0.0
-
-replace github.com/cosmos/cosmos-proto => github.com/cosmos/cosmos-proto v1.0.0-beta.5
-
-replace github.com/cosmos/cosmos-sdk => github.com/neutron-org/cosmos-sdk v0.50.7-neutron
-
-replace github.com/cosmos/gaia/v11 => github.com/cosmos/gaia/v11 v11.0.0-20230724152830-861ba391c3b4
-
-replace github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.10
-
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-replace github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
-
-replace golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
+replace (
+	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
+	github.com/CosmWasm/wasmd => github.com/neutron-org/wasmd v0.51.0
+	github.com/cosmos/admin-module/v2 => github.com/neutron-org/admin-module/v2 v2.0.0
+	github.com/cosmos/cosmos-sdk => github.com/neutron-org/cosmos-sdk v0.50.7-neutron
+	// explicitely replace iavl to v1.2.0 cause sometimes go mod tidy uses not right version
+	github.com/cosmos/iavl => github.com/cosmos/iavl v1.2.0
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/prometheus/procfs => github.com/prometheus/procfs v0.12.0
+	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
+)
